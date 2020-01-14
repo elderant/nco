@@ -1,0 +1,37 @@
+{
+  "deploy.reloaded": {
+      "packages": [
+          {
+              "name": "nco Webpage",
+              "description": "The website",
+
+              "files": [
+                  "**/*.php",
+                  "**/*.css",
+                  "**/*.js",
+                  "**/*.log"
+              ],
+              "exclude": [
+                  //"**/!(wp-config).php",
+                  //"**/!(debug).log",
+              ],
+
+              "deployOnSave": [ "ncoWebpage" ],
+              "syncWhenOpen": "ncoWebpage",
+          }
+      ],
+
+      "targets": [
+          {
+              "type": "ftp",
+              "name": "ncoWebpage",
+              "description": "Wp-folder",
+              "host": "ftp.ncoaccessories.com", 
+              "port": 21,
+              "user": "jabali@ncoaccessories.com", 
+              "password": "Morimosenjesus84/",
+              "dir": ""
+          }
+      ]
+  }
+}
