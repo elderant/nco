@@ -195,7 +195,6 @@ function nco_insurance_activation_handler() {
 		}
 	}  
 
-	error_log('code activation successful, returning true');
 	set_transient( 'nco_activation_success', true, MINUTE_IN_SECONDS );	
 	wp_redirect('/nco-siempre-seguro/');
 }
@@ -244,7 +243,46 @@ function nco_post_type_active_codes() {
 }
 add_action('init', 'nco_post_type_active_codes');
 
+/************************************************************/
+/**************** NCO Insurance Admin table *****************/
+/************************************************************/
 
+add_filter('manage_nco_active_code_posts_columns', 'nco_active_code_table_head');
+function nco_active_code_table_head( $defaults ) {
+	$defaults['title'] = __('Código', 'nco');
+	unset($defaults['date']);
+	unset($defaults['author']);
+	$defaults['owner'] = __('Dueño', 'nco');
+	$defaults['date'] = __('Fecha Activación', 'nco');
+	$defaults['time_active'] = __('Tiempo activado', 'nco');	
+  $defaults['claim_counter'] = __('Redimido', 'nco');
+
+  return $defaults;
+}
+
+add_action( 'manage_nco_active_code_posts_custom_column', 'nco_active_code_table_content', 10, 2 );
+
+function nco_active_code_table_content( $column_name, $post_id ) {
+	if ($column_name == 'owner') {
+		$first_name = get_post_meta( $post_id, 'first_name', true );
+		$last_name = get_post_meta( $post_id, 'last_name', true );
+		$email = get_post_meta( $post_id, 'email', true );
+
+		echo $first_name . ' ' .  $last_name . '<br/>' . $email;
+	}
+	if ($column_name == 'time_active') {
+		$created_date = new DateTime(get_post_time('Y-m-d', true, $post_id, false));
+		$current_date = new DateTime("now");
+		$time_active = $current_date->diff($created_date, true);
+
+		echo $time_active->format('%a días');
+	}
+
+	if ($column_name == 'claim_counter') {
+		echo get_post_meta( $post_id, 'claim count', true ) . ' veces';
+	}
+
+}
 
 function nco_get_educacion_filter_html () {
 	global $wp_query;
