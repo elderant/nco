@@ -1,0 +1,119 @@
+/* Responsive : General */
+@media (min-width : 1025px) { }
+@media (max-width : 1024px) {}
+@media (max-width : 768px) {}
+
+/* Responsive : Specific */
+@media (min-width : 1441px) {}
+
+@media (min-width : 1281px) and (max-width : 1440px) {}
+
+@media (min-width : 1024px) and (max-width : 1280px) {}
+
+@media (min-width : 768px) and (max-width:  1023px) {}
+
+@media (min-width : 601px) and (max-width : 767px) {}
+
+@media (min-width : 480px) and (max-width : 600px) {}
+
+@media (max-width : 479px) {}
+
+/******************** General ********************/
+:root {
+  --primary-blue: #336b9b;
+  --primary-orange: #f19800;
+  --secondary-red: #A84D48;
+}
+
+.hidden {
+  display: none;
+}
+
+.transparent {
+  opacity: 0;
+}
+
+.uppercase,
+.uppercase h1,
+.uppercase h2,
+.uppercase h3 {
+  text-transform: uppercase;
+}
+
+/* a {
+  cursor: pointer;
+}
+
+a.disabled {
+  pointer-events: none;
+}
+
+a.inactive {
+  pointer-events: none;
+} */
+
+@media only screen and (min-width: 1025px) {
+  .hidden-desktop {
+    display: none !important;
+  }
+}
+
+/* 600 to select only phones.*/
+@media only screen and (max-width: 1024px) {
+  .hidden-mb {
+    display: none !important;
+  }  
+}
+
+/******************** NCO Insurance Activation ********************/
+
+.page-id-3671 .wrapper-breads .wrapper-breads-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.page-id-3671 .wrapper-breads-inner ol {
+  margin: 0;
+}
+
+.page-id-3671 .nco-form .input-container {
+  margin-bottom: 12px;
+}
+
+.page-id-3671 .nco-form .input-container label {
+  display: block;
+}
+
+.page-id-3671 .nco-form .input-container input,
+.page-id-3671 .nco-form .input-container select {
+  width: 400px;
+  height: 30px;
+  border: 0.5px solid black
+}
+
+.page-id-3671 .nco-form .input-container input {
+  padding-left: 3px;
+  padding-right: 3px;
+}
+
+.page-id-3671 .nco-form .input-container input.error,
+.page-id-3671 .nco-form .input-container select.error {
+  border: 1px solid var(--secondary-red);
+}
+
+.page-id-3671 .nco-form .input-container label.error {
+  padding-left: 6px;
+  color: var(--secondary-red);
+  font-weight: bold;
+}
+
+.page-id-3671 .nco-form .form-actions {
+  margin-top: 24px;
+  margin-left: 12px;
+}
+
+.page-id-3671 .insurance-form-section hr {
+  border-top-color: var(--primary-orange);
+  border-top-width: 4px;
+}
