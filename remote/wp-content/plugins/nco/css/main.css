@@ -23,6 +23,7 @@
   --primary-blue: #336b9b;
   --primary-orange: #f19800;
   --secondary-red: #A84D48;
+  --secondary-green: #18F476
 }
 
 .hidden {
@@ -67,7 +68,8 @@ a.inactive {
 
 /******************** NCO Insurance Activation ********************/
 
-.page-id-3671 .wrapper-breads .wrapper-breads-inner {
+.page-id-3671 .wrapper-breads .wrapper-breads-inner,
+.page-id-9776 .wrapper-breads .wrapper-breads-inner {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -116,4 +118,55 @@ a.inactive {
 .page-id-3671 .insurance-form-section hr {
   border-top-color: var(--primary-orange);
   border-top-width: 4px;
+}
+
+/******************** NCO Insurance Query ********************/
+.page-id-9776 .nco-form.query-form {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+}
+
+.page-id-9776 .query-form .input-container label {
+  display: block;
+  text-align: left;
+}
+
+.page-id-9776 .query-form .input-container input.error {
+  border-color: var(--secondary-red);
+}
+
+.page-id-9776 .query-form .form-actions {
+  margin-left: 24px;
+}
+
+.page-id-9776 .insurance-results-section table.posts {
+  table-layout: fixed;
+  margin-top: 48px;
+}
+
+.insurance-results-section table.posts tr th {
+  color: #32373c;
+  line-height: 1.4em;
+  border: none;
+  border-bottom: 1px solid #ccd0d4;
+  font-weight: 400;
+  text-align: left;
+  font-size: 14px;
+}
+
+.insurance-results-section table.posts tr.valid {
+  background-color: var(--secondary-green);
+}
+
+.insurance-results-section table.posts tr.invalid {
+  background-color: var(--secondary-red);
+}
+
+.insurance-results-section table.posts tr td {
+  border: none;
+  border-bottom: 1px solid #ccd0d4;
+  line-height: 1.5em;
+  padding: 8px 10px;
+  vertical-align: middle;
 }

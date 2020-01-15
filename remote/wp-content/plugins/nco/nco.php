@@ -284,6 +284,124 @@ function nco_active_code_table_content( $column_name, $post_id ) {
 
 }
 
+/************************************************************/
+/******************* NCO Insurance Query ********************/
+/************************************************************/
+
+function nco_query_insurance_form_html () {
+  $template_url = nco_load_template('query.php', 'insurance');
+	load_template($template_url, true);
+}
+add_shortcode( 'nco_insurance_query_form', 'nco_query_insurance_form_html' );
+
+// Add to cart from shop
+add_action( 'wp_ajax_nopriv_query_codes', 'nco_query_codes' );
+add_action( 'wp_ajax_query_codes', 'nco_query_codes' );
+
+function nco_query_codes() {
+	//error_log('Calling query codes');
+	$query_string = $_POST['query'];
+
+	$args = array("post_type" => "nco_active_code", "s" => $query_string);
+	$posts = get_posts( $args );
+
+	//error_log(print_r($query,1));
+
+	$header	= '<table class="wp-list-table widefat fixed striped posts">' .
+		'<thead>' .
+			'<tr>' .
+				'<th scope="col" id="title" class="manage-column column-title">' .
+					'<span>Código</span>' .
+				'</th>' .
+				'<th scope="col" id="owner" class="manage-column column-owner">' .
+					'<span>Dueño</span>' .
+				'</th>' .
+				'<th scope="col" id="date" class="manage-column column-date">' .
+					'<span>Fecha Activación</span>' .
+				'</th>' .
+				'<th scope="col" id="time_active" class="manage-column column-time_active">' .
+					'<span>Tiempo activado</span>' .
+				'</th>' .
+				'<th scope="col" id="claim_counter" class="manage-column column-claim_counter">' .
+					'<span>Redimido</span>' .
+				'</th>' .
+				'<th scope="col" id="valid_evaluation" class="manage-column column-valid">' .
+					'<span>Valido</span>' .
+				'</th>' .
+				'<th scope="col" id="actions" class="manage-column column-actions">' .
+					'<span>Acciones</span>' .
+				'</th>' .
+			'</tr>' .
+		'</thead>' .
+		'<tbody id="the-list">';
+
+	$footer	= '</tbody></table>';
+	$body = '';
+
+	foreach( $posts as $post ) {
+		error_log('cycling through post : ' . print_r($post,1));
+		$post_id = $post -> ID;
+		$first_name = get_post_meta( $post_id, 'first_name', true );
+		$last_name = get_post_meta( $post_id, 'last_name', true );
+		$email = get_post_meta( $post_id, 'email', true );
+
+		$created_date = new DateTime(get_post_time('Y-m-d', true, $post_id, false));
+		$current_date = new DateTime("now");
+		$time_active = $current_date->diff($created_date, true);
+
+		$claim_count = get_post_meta( $post_id, 'claim count', true );
+
+		$valid = false;
+		if($time_active -> days < 365 && $claim_count <= 4) {
+			$valid = true;
+		}
+
+		$valid_class = $valid ? 'valid' : 'invalid';
+		$valid_evaluation = $valid ? 'Si' : 'No';
+
+		$body .= '<tr class="' . $valid_class . '">' .
+			'<td class="title column-title">' .
+				'<span>' . $post -> post_title . '</span>' .
+			'</td>' .
+			'<td class="owner column-owner">' .
+				'<span>' .
+					$first_name . ' ' .  $last_name . '<br/>' . $email .
+				'</span>' .
+			'</td>' .
+			'<td class="date column-date">' .
+				'<span>' .
+					$post -> post_date .
+				'</span>' .
+			'</td>' .
+			'<td class="time_active column-time_active">' .
+				'<span>' .
+					$time_active->format('%a días') .
+				'</span>' .
+			'</td>' .
+			'<td class="claim_counter column-claim_counter">' .
+				'<span>' .
+					$claim_count . ' veces' .
+				'</span>' .
+			'</td>' .
+			'<td class="valid_evaluation column-valid_evaluation">' .
+				'<span>' .
+					$valid_evaluation .
+				'</span>' .
+			'</td>' .
+			'<td class="actions column-actions">' .
+				'<span>' .
+					'PLACEHOLDER' .
+				'</span>' .
+			'</td>' .
+		'</tr>';
+
+		error_log('end of cycle : ' . print_r($body,1));
+	}
+	
+	echo $header . $body . $footer;
+	die();
+}
+
 function nco_get_educacion_filter_html () {
 	global $wp_query;
 

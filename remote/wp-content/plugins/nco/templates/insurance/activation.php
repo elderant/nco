@@ -1,8 +1,6 @@
 <?php //nco_insurance_activation_handler();?>
 <?php $error = get_transient( 'nco_activation_error' ); ?>
 <?php $success = get_transient( 'nco_activation_success' ); ?>
-<?php error_log('getting activation template');?>
-<?php error_log('$success : ' . print_r($success,1));?>
 <div class="insurance-form-section">
   <?php if(true == $success) : ?>
     <h3><?php _e('Su codigo a sido activado exitosamente.', 'nco');?></h3>
@@ -130,7 +128,6 @@
         <input type="hidden" name="action" value="nco_insurance_activation">
       </div>
       <div class="form-actions">
-        <?php do_action('register_form'); ?>
         <input type="submit" name="wp-submit" value="<?php _e('Registrar'); ?>" class="code-submit" tabindex="100" />
         <!-- <input type="hidden" name="redirect_to" value="<?php //echo esc_attr($_SERVER['REQUEST_URI']); ?>?action=user_registered" /> -->
       </div>
