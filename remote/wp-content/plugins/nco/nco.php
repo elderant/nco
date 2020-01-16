@@ -19,7 +19,10 @@ function nco_scripts () {
 
 	wp_localize_script( 'nco-js', 'ajax_params', array('ajax_url' => admin_url( 'admin-ajax.php' )));
 
-	wp_enqueue_script('jquery-validate', 'https://cdn.jsdelivr.net/jquery.validation/1.15.1/jquery.validate.min.js', array('jquery'), '1.10.0',	true);
+	if(is_page(3671)) {
+		wp_enqueue_script('jquery-validate', 'https://cdn.jsdelivr.net/jquery.validation/1.15.1/jquery.validate.min.js', array('jquery'), '1.10.0',	true);
+	}
+		
 }
 
 function nco_admin_scripts () {
@@ -369,7 +372,7 @@ function nco_query_codes() {
 		$claim_count = get_post_meta( $post_id, 'claim count', true );
 
 		$valid = false;
-		if($time_active -> days < 365 && $claim_count < 4) {
+		if($time_active -> days <= 365 && $claim_count < 4) {
 			$valid = true;
 		}
 
