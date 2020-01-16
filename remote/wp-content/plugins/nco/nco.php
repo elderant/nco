@@ -115,7 +115,6 @@ function nco_insurance_activation_handler() {
 		$device = $_POST['insurance_device'];
 		$serial = $_POST['insurance_insurance_serial'];
 		$code = $_POST['insurance_activation_code'];
-		$code = sanitize_text_field( $code );
 		
 		// validate values.
 		if(empty($first_name)) {
@@ -151,18 +150,21 @@ function nco_insurance_activation_handler() {
 			$error = true;
 		}
 	
+		$code = sanitize_text_field( $code );
 		$valid_code = nco_validate_insurance_code_activation( $code );
+		error_log('valid code : ' . print_r($valid_code,1));
 		$nco_activation_error = array();
 		$error = false;
 		if(!$valid_code) {
+			error_log('returning error');
 			$nco_activation_error['insurance_activation_code'] = __('El codigo de activacion escrito no pudo ser validado', 'nco');
 			$error = true;
 		}
 
-		
 		if($error) {
 			set_transient( 'nco_activation_error', $nco_activation_error, MINUTE_IN_SECONDS );	
 			wp_redirect('/nco-siempre-seguro/');
+			return;
 		}
 
 		//sanitize values to add to database
@@ -197,11 +199,25 @@ function nco_insurance_activation_handler() {
 
 	set_transient( 'nco_activation_success', true, MINUTE_IN_SECONDS );	
 	wp_redirect('/nco-siempre-seguro/');
+	return;
 }
 
 function nco_validate_insurance_code_activation($code) {
-  
-  return true;
+	global $wpdb;
+	$table_name = "{$wpdb->prefix}nco_available_codes";
+
+	$sql = $wpdb->prepare( 
+		"SELECT * FROM " . $table_name . " WHERE code='%s'", 
+		array( $code ) );
+	$codes = $wpdb->get_results($sql);
+	
+	if(sizeof($codes) == 1 && intval($codes[0]->status) == 1) {
+		$wpdb->update( 'd62_nco_available_codes', array('status' => '0'), array("code_id" => $codes[0]->code_id), array("%d"), array("%d") );
+		return true;
+	}
+	else {
+		return false;
+	}
 }
 
 /*Custom Post type start*/
@@ -299,13 +315,10 @@ add_action( 'wp_ajax_nopriv_query_codes', 'nco_query_codes' );
 add_action( 'wp_ajax_query_codes', 'nco_query_codes' );
 
 function nco_query_codes() {
-	//error_log('Calling query codes');
 	$query_string = $_POST['query'];
 
 	$args = array("post_type" => "nco_active_code", "s" => $query_string);
 	$posts = get_posts( $args );
-
-	//error_log(print_r($query,1));
 
 	$header	= '<table class="wp-list-table widefat fixed striped posts">' .
 		'<thead>' .
@@ -315,6 +328,9 @@ function nco_query_codes() {
 				'</th>' .
 				'<th scope="col" id="owner" class="manage-column column-owner">' .
 					'<span>Dueño</span>' .
+				'</th>' .
+				'<th scope="col" id="device" class="manage-column column-device">' .
+					'<span>Dispositivo</span>' .
 				'</th>' .
 				'<th scope="col" id="date" class="manage-column column-date">' .
 					'<span>Fecha Activación</span>' .
@@ -339,11 +355,12 @@ function nco_query_codes() {
 	$body = '';
 
 	foreach( $posts as $post ) {
-		error_log('cycling through post : ' . print_r($post,1));
 		$post_id = $post -> ID;
 		$first_name = get_post_meta( $post_id, 'first_name', true );
 		$last_name = get_post_meta( $post_id, 'last_name', true );
 		$email = get_post_meta( $post_id, 'email', true );
+
+		$device = get_post_meta( $post_id, 'device', true );
 
 		$created_date = new DateTime(get_post_time('Y-m-d', true, $post_id, false));
 		$current_date = new DateTime("now");
@@ -352,12 +369,13 @@ function nco_query_codes() {
 		$claim_count = get_post_meta( $post_id, 'claim count', true );
 
 		$valid = false;
-		if($time_active -> days < 365 && $claim_count <= 4) {
+		if($time_active -> days < 365 && $claim_count < 4) {
 			$valid = true;
 		}
 
 		$valid_class = $valid ? 'valid' : 'invalid';
 		$valid_evaluation = $valid ? 'Si' : 'No';
+		$valid_status = $valid ? '' : 'disabled';
 
 		$body .= '<tr class="' . $valid_class . '">' .
 			'<td class="title column-title">' .
@@ -366,6 +384,11 @@ function nco_query_codes() {
 			'<td class="owner column-owner">' .
 				'<span>' .
 					$first_name . ' ' .  $last_name . '<br/>' . $email .
+				'</span>' .
+			'</td>' .
+			'<td class="device column-device">' .
+				'<span>' .
+					$device .
 				'</span>' .
 			'</td>' .
 			'<td class="date column-date">' .
@@ -379,9 +402,10 @@ function nco_query_codes() {
 				'</span>' .
 			'</td>' .
 			'<td class="claim_counter column-claim_counter">' .
-				'<span>' .
-					$claim_count . ' veces' .
+				'<span class="claim-count">' .
+					$claim_count .
 				'</span>' .
+				'<span class="claim-label"> veces.</span>' .
 			'</td>' .
 			'<td class="valid_evaluation column-valid_evaluation">' .
 				'<span>' .
@@ -390,15 +414,30 @@ function nco_query_codes() {
 			'</td>' .
 			'<td class="actions column-actions">' .
 				'<span>' .
-					'PLACEHOLDER' .
+					'<button ' . $valid_status . ' class="add-claim-button button alt ' . $valid_class . '" data-id="' . $post_id . '">' . __('Redimir','nco') . '</button>' .
 				'</span>' .
 			'</td>' .
 		'</tr>';
-
-		error_log('end of cycle : ' . print_r($body,1));
 	}
 	
 	echo $header . $body . $footer;
+	die();
+}
+
+// Add to cart from shop
+add_action( 'wp_ajax_nopriv_add_claim', 'nco_add_claim_to_insurance' );
+add_action( 'wp_ajax_add_claim', 'nco_add_claim_to_insurance' );
+
+function nco_add_claim_to_insurance() {
+	error_log('calling add claim handler');
+	$post_id = $_POST['postId'];
+	$claim_count = get_post_meta( $post_id, 'claim count', true ) + 1;
+	error_log('setting claims to : ' . $claim_count);
+	update_post_meta( $post_id, 'claim count', $claim_count );
+
+	$confirmation="<br/><span>El número de usos del seguro a incrementado en 1</span>";
+
+	echo $confirmation;
 	die();
 }
 

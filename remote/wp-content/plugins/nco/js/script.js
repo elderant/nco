@@ -51,13 +51,21 @@
           query : query,
         },
         success : function( response ) {
+          $('.page .insurance-results-section').empty();
           $('.page .insurance-results-section').append( response );
           
-          webStateWaiting(false);
+          $('.insurance-results-section .actions button.add-claim-button').each(function() {
+            $(this).on('click', function(event){
+              event.preventDefault();
+              nco_add_claim_to_insurance(event);
+              event.stopPropagation();
+            });
+          });
 
+          webStateWaiting(false);
         },
         error : function ( response ) {
-          $('#pfb-signup-result').html('<p>Sorry but we were unable retreive the list of codes.</p>');
+          $('#pfb-signup-result').html('<p>Sorry but we were unable to retreive the list of codes.</p>');
           console.log(response);
         },
         beforeSend: function() {
@@ -70,6 +78,38 @@
       $queryInput.addClass('error');
     }
   }
+
+var nco_add_claim_to_insurance = function(event) {
+  let $button = $(event.target);
+  let postId = $button.attr('data-id');
+  let $cell = $button.parents('.actions');
+  let $countContainer = $cell.siblings('.column-claim_counter').find('span.claim-count');
+
+  $.ajax({
+    url : ajax_params.ajax_url,
+    type : 'post',
+    data : {
+      action : 'add_claim',
+      postId : postId,
+    },
+    success : function( response ) {
+      $cell.append( response );
+      let count = parseInt($countContainer.html(), 10) + 1;
+      $countContainer.html(count);
+
+      webStateWaiting(false);
+    },
+    error : function ( response ) {
+      $('#pfb-signup-result').html('<p>Sorry but we were unable to add a claim count to the insurance at this time.</p>');
+      console.log(response);
+    },
+    beforeSend: function() {
+      webStateWaiting(true);
+      return true;
+    },
+  });
+}
+
 
   /**
   * Disables all links and changes cursor for the website, used in ajax calls.
@@ -97,7 +137,7 @@
       nco_validate_insurance_activation_form_jquery();
     }
     if($('.page-id-9776').length > 0) {
-      $('.page-id-9776 .nco-form.query-form input[type="submit"]').each(function(){
+      $('.page-id-9776 .nco-form.query-form input[type="submit"]').each(function() {
         $(this).on('click', function(event){
           event.preventDefault();
           nco_handle_query_codes(event);

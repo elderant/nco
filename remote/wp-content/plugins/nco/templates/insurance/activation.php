@@ -3,8 +3,10 @@
 <?php $success = get_transient( 'nco_activation_success' ); ?>
 <div class="insurance-form-section">
   <?php if(true == $success) : ?>
+    <hr/>
     <h3><?php _e('Su codigo a sido activado exitosamente.', 'nco');?></h3>
     <h5><?php _e('Gracias por utilizar nuestros servicios', 'nco');?></h5>
+    <?php delete_transient( 'nco_activation_success' ); ?>
   <?php else : ?>
     <form action="<?php echo esc_url( admin_url('admin-post.php') ); ?>" method="post" class="wpcf7-form nco-form">
       <div class="first-name-container input-container full-width">

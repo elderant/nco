@@ -23,7 +23,10 @@
   --primary-blue: #336b9b;
   --primary-orange: #f19800;
   --secondary-red: #A84D48;
-  --secondary-green: #18F476
+  --secondary-green: #18F476;
+  --border-gray: #e0e0e0;
+  --dark-gray: #adadad;
+  --secondary-white: white;
 }
 
 .hidden {
@@ -132,8 +135,13 @@ a.inactive {
   text-align: left;
 }
 
+.page-id-9776 .query-form .input-container input[type="text"] {
+  padding-left: 3px;
+  padding-right: 3px;
+}
+
 .page-id-9776 .query-form .input-container input.error {
-  border-color: var(--secondary-red);
+  border: 1px solid var(--secondary-red);
 }
 
 .page-id-9776 .query-form .form-actions {
@@ -141,7 +149,7 @@ a.inactive {
 }
 
 .page-id-9776 .insurance-results-section table.posts {
-  table-layout: fixed;
+  /* table-layout: fixed; */
   margin-top: 48px;
 }
 
@@ -169,4 +177,41 @@ a.inactive {
   line-height: 1.5em;
   padding: 8px 10px;
   vertical-align: middle;
+}
+
+.insurance-results-section table.posts .add-claim-button {
+  display: inline-block;
+  padding: 0 12px;
+  background: var(--secondary-white);
+  -webkit-transition: all 0.2s ease-in-out 0s;
+  -o-transition: all 0.2s ease-in-out 0s;
+  transition: all 0.2s ease-in-out 0s;
+  line-height: 3em;
+  text-align: center;
+  border: 1px solid var(--border-gray);
+  border-radius: 40%;
+  -webkit-border-radius: 40%;
+  -moz-border-radius: 50%;
+  -ms-border-radius: 50%;
+  -o-border-radius: 50%;
+  overflow: hidden;
+  vertical-align: middle;
+  white-space: nowrap;
+  font-weight: 700;
+  position: relative;
+  text-decoration: none;
+  box-shadow: none;
+  text-shadow: none;
+}
+
+.insurance-results-section table.posts .add-claim-button.invalid {
+  pointer-events: none;
+  border-color: var(--dark-gray);
+  background: var(--dark-gray);
+}
+
+.insurance-results-section table.posts .add-claim-button:hover {
+  border-color: var(--primary-blue);
+  background-color: var(--primary-blue);
+  color: var(--secondary-white);
 }
