@@ -73,10 +73,10 @@ define( 'WP_AUTO_UPDATE_CORE',  true );
 define( 'WP_CRON_LOCK_TIMEOUT', 120  );
 
 
-// define('WP_DEBUG', false);
-define('WP_DEBUG', true );
-define('WP_DEBUG_DISPLAY', false);
-define('WP_DEBUG_LOG', true);
+define('WP_DEBUG', false);
+// define('WP_DEBUG', true );
+// define('WP_DEBUG_DISPLAY', false);
+// define('WP_DEBUG_LOG', true);
 /* That's all, stop editing! Happy blogging. */
 
 /** Absolute path to the WordPress directory. */

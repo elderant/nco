@@ -300,7 +300,6 @@ function nco_active_code_table_content( $column_name, $post_id ) {
 	if ($column_name == 'claim_counter') {
 		echo get_post_meta( $post_id, 'claim count', true ) . ' veces';
 	}
-
 }
 
 /************************************************************/
@@ -432,10 +431,9 @@ add_action( 'wp_ajax_nopriv_add_claim', 'nco_add_claim_to_insurance' );
 add_action( 'wp_ajax_add_claim', 'nco_add_claim_to_insurance' );
 
 function nco_add_claim_to_insurance() {
-	error_log('calling add claim handler');
 	$post_id = $_POST['postId'];
 	$claim_count = get_post_meta( $post_id, 'claim count', true ) + 1;
-	error_log('setting claims to : ' . $claim_count);
+	
 	update_post_meta( $post_id, 'claim count', $claim_count );
 
 	$confirmation="<br/><span>El número de usos del seguro a incrementado en 1</span>";
