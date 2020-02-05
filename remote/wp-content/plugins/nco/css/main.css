@@ -144,6 +144,17 @@ a.inactive {
   border: 1px solid var(--secondary-red);
 }
 
+.page-id-9776 .query-form .input-container.field-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.page-id-9776 .query-form .input-container select {
+  height: 30px;
+  padding: 1px 0px;
+  margin-left: 12px;
+}
+
 .page-id-9776 .query-form .form-actions {
   margin-left: 24px;
 }
@@ -214,4 +225,85 @@ a.inactive {
   border-color: var(--primary-blue);
   background-color: var(--primary-blue);
   color: var(--secondary-white);
+}
+
+.page-id-9776 .wrapper-container > .modal-root {
+  z-index: 100;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+}
+
+.page-id-9776 .wrapper-container > .modal-root .modal-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background-color: rgba(0,0,0, 0.4);
+}
+
+.modal-root .modal-dialog {
+  margin: 0;
+}
+
+.page-id-9776 .wrapper-container > .modal-root .modal-dialog {
+  width: 40%;
+  min-height: 25%;
+  top: 50%;
+  left: 50%;
+  margin: 0;
+  transform: translate(-50%, -50%);
+  background-color: white;
+}
+
+.modal-root .modal-dialog header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--primary-blue);
+  color: var(--secondary-white);
+  font-size: 1.25em;
+  font-weight: 700;
+}
+
+.modal-dialog header .modal-title {
+  letter-spacing: 1px;
+}
+
+.modal-dialog header .close-button {
+  background: none;
+  border: none;
+}
+
+.modal-root .modal-dialog .verification-form {
+  text-align: center;
+  padding: 24px 24px;
+  color: black;
+}
+
+.modal-root .modal-dialog span.error {
+  padding-left: 6px;
+  color: var(--secondary-red);
+  font-weight: bold;
+}
+
+.modal-dialog .verification-form label {
+  display: block;
+}
+
+.modal-dialog .verification-form input[type="password"] {
+  border: 0.5px solid black;
+  padding-left: 3px;
+  padding-right: 3px;
+}
+
+.modal-dialog .verification-form input.error[type="password"] {
+  border: 1px solid var(--secondary-red);
+}
+
+.modal-dialog .verification-form .form-actions {
+  margin-top: 24px;
 }

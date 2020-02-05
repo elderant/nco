@@ -1,3 +1,11 @@
 .post-type-nco_active_code #the-list .row-actions .view { 
   display: none; 
 }
+
+.nco_active_code_page_nco_add_claim_password #wpbody-content #poststuff .input-div {
+  margin: 12px 0;
+}
+
+.nco_active_code_page_nco_add_claim_password #wpbody-content #poststuff input[type="submit"] {
+  margin-top: 24px;
+}

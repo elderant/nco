@@ -6,7 +6,7 @@ Version:     1.0
 Author:      Sebastian Guerrero
 */
 
-//include( plugin_dir_path( __FILE__ ) . 'includes/admin.php' );
+include( plugin_dir_path( __FILE__ ) . 'includes/admin.php' );
 
 // Script hooks.
 add_action( 'wp_enqueue_scripts', 'nco_scripts' );
@@ -155,11 +155,10 @@ function nco_insurance_activation_handler() {
 	
 		$code = sanitize_text_field( $code );
 		$valid_code = nco_validate_insurance_code_activation( $code );
-		error_log('valid code : ' . print_r($valid_code,1));
+
 		$nco_activation_error = array();
 		$error = false;
 		if(!$valid_code) {
-			error_log('returning error');
 			$nco_activation_error['insurance_activation_code'] = __('El codigo de activacion escrito no pudo ser validado', 'nco');
 			$error = true;
 		}
@@ -312,14 +311,35 @@ function nco_query_insurance_form_html () {
 }
 add_shortcode( 'nco_insurance_query_form', 'nco_query_insurance_form_html' );
 
-// Add to cart from shop
+// Define ajax handlers for query
 add_action( 'wp_ajax_nopriv_query_codes', 'nco_query_codes' );
 add_action( 'wp_ajax_query_codes', 'nco_query_codes' );
 
 function nco_query_codes() {
 	$query_string = $_POST['query'];
+	$query_type = $_POST['type'];
 
-	$args = array("post_type" => "nco_active_code", "s" => $query_string);
+	if(strcasecmp($query_type, 'codigo') == 0) {
+		$args = array("post_type" => "nco_active_code", "s" => $query_string);
+	}
+	elseif(strcasecmp($query_type, 'serie') == 0){
+		$args = array('post_type' => 'nco_active_code',	'meta_query' => array(
+		array(
+				'key' => 'serial',
+				'value' => $query_string,
+				'compare' => 'LIKE',
+			),
+		),);
+	}
+	elseif(strcasecmp($query_type, 'email') == 0){
+		$args = array('post_type' => 'nco_active_code',	'meta_query' => array(
+			array(
+					'key' => 'email',
+					'value' => $query_string,
+					'compare' => 'LIKE',
+			),
+		),);
+	}
 	$posts = get_posts( $args );
 
 	$header	= '<table class="wp-list-table widefat fixed striped posts">' .
@@ -337,10 +357,10 @@ function nco_query_codes() {
 				'<th scope="col" id="date" class="manage-column column-date">' .
 					'<span>Fecha Activación</span>' .
 				'</th>' .
-				'<th scope="col" id="time_active" class="manage-column column-time_active">' .
+				'<th scope="col" id="time_active" class="manage-column column-time-active">' .
 					'<span>Tiempo activado</span>' .
 				'</th>' .
-				'<th scope="col" id="claim_counter" class="manage-column column-claim_counter">' .
+				'<th scope="col" id="claim_counter" class="manage-column column-claim-counter">' .
 					'<span>Redimido</span>' .
 				'</th>' .
 				'<th scope="col" id="valid_evaluation" class="manage-column column-valid">' .
@@ -378,8 +398,9 @@ function nco_query_codes() {
 		$valid_class = $valid ? 'valid' : 'invalid';
 		$valid_evaluation = $valid ? 'Si' : 'No';
 		$valid_status = $valid ? '' : 'disabled';
+		$id_class = 'post-' . $post_id;
 
-		$body .= '<tr class="' . $valid_class . '">' .
+		$body .= '<tr class="' . $valid_class . ' ' . $id_class . '">' .
 			'<td class="title column-title">' .
 				'<span>' . $post -> post_title . '</span>' .
 			'</td>' .
@@ -403,13 +424,13 @@ function nco_query_codes() {
 					$time_active->format('%a días') .
 				'</span>' .
 			'</td>' .
-			'<td class="claim_counter column-claim_counter">' .
+			'<td class="claim_counter column-claim-counter">' .
 				'<span class="claim-count">' .
 					$claim_count .
 				'</span>' .
 				'<span class="claim-label"> veces.</span>' .
 			'</td>' .
-			'<td class="valid_evaluation column-valid_evaluation">' .
+			'<td class="valid_evaluation column-valid-evaluation">' .
 				'<span>' .
 					$valid_evaluation .
 				'</span>' .
@@ -427,49 +448,56 @@ function nco_query_codes() {
 }
 
 // Add to cart from shop
-add_action( 'wp_ajax_nopriv_add_claim', 'nco_add_claim_to_insurance' );
-add_action( 'wp_ajax_add_claim', 'nco_add_claim_to_insurance' );
+// add_action( 'wp_ajax_nopriv_add_claim', 'nco_add_claim_to_insurance' );
+// add_action( 'wp_ajax_add_claim', 'nco_add_claim_to_insurance' );
 
+// Not used
 function nco_add_claim_to_insurance() {
 	$post_id = $_POST['postId'];
 	$claim_count = get_post_meta( $post_id, 'claim count', true ) + 1;
 	
 	update_post_meta( $post_id, 'claim count', $claim_count );
 
-	$confirmation="<br/><span>El número de usos del seguro a incrementado en 1</span>";
+	$confirmation = "<br/><span>El número de usos del seguro a incrementado en 1</span>";
 
 	echo $confirmation;
 	die();
 }
 
-function nco_get_educacion_filter_html () {
-	global $wp_query;
+// Define ajax handlers for password validation
+add_action( 'wp_ajax_nopriv_validate_claim_password', 'nco_validate_claim_password' );
+add_action( 'wp_ajax_validate_claim_password', 'nco_validate_claim_password' );
 
-	// Category taxonomies query.
-	// 
-	$parent_ids = array(129, 138, 144);
-	$args = array(
-    'taxonomy' => 'portfolio-category',
-		'hide_empty' => false,
-		'include'	=> $parent_ids,
-	);
+function nco_validate_claim_password() {
+	$claim_password = $_POST['claimPassword'];
+	$post_id = $_POST['postId'];
 
-	// The Term Query
-	$term_query = new WP_Term_Query( $args );
+	$claim_passwords = get_option( 'claim_passwords', array() );
+	$found = false;
+	foreach($claim_passwords as $index => $password ) {
+		if(false !== password_verify($claim_password, $password['password'] )) {
+			$found = true;
+			break;
+		}
+	}
 
-	// foreach($term_query -> get_terms() as $term) {
-	// 	$term_children = get_term_children( $term, $taxonomy );
-	// 	if(count($term_children) > 0 ) {
-	// 		$term -> child_terms = nco_get_children_taxonomies($term, $term_children);
-	// 	}
-	// }
+	$return_array = array();
+	if($found) {
+		$claim_count = get_post_meta( $post_id, 'claim count', true ) + 1;
+		update_post_meta( $post_id, 'claim count', $claim_count );
 
-	$wp_query -> query_vars['nco_args']['term_query'] = $term_query;
-	$wp_query -> query_vars['nco_args']['term_id'] = '';
-	$wp_query -> query_vars['nco_args']['category_args'] = array();
+		$return_array['result'] = -1;
+		$return_array['html'] = "<br/><span>El número de usos del seguro a incrementado en 1</span>";
+	}
+	elseif(sizeof($claim_passwords) == 0 ) {
+		$return_array['result'] = 1;
+		$return_array['html'] = "<span class='error'>No se encontraron contraseñas para validar.</span>";
+	}
+	else {
+		$return_array['result'] = 2;
+		$return_array['html'] = "<span class='error'>La contraseña ingresada no pudo ser validada.</span>";
+	}
 
-	// $template_url = nco_load_template('filter.php', 'educacion');
-	// load_template($template_url, true);
+	echo json_encode($return_array);
+	die();
 }
-	
-//add_shortcode( 'nco_educacion_filter', 'nco_get_educacion_filter_html' );
