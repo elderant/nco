@@ -10,31 +10,31 @@
   <?php else : ?>
     <form action="<?php echo esc_url( admin_url('admin-post.php') ); ?>" method="post" class="wpcf7-form nco-form">
       <div class="first-name-container input-container full-width">
-        <label for="first_name">
+        <label for="insurance_first_name">
           <!-- <span class="asterisk">*</span> -->
           <?php _e('Nombre','nco'); ?>
         </label>
         <input type="text" name="insurance_first_name" value="" id="first-name" tabindex="10" />
         <?php if ( isset($error['insurance_first_name'] ) ) : ?>
-          <label id="insurance-first-name-error-server" class="error" for="insurance_email">
+          <label id="insurance-first-name-error-server" class="error" for="insurance_first_name">
             <?php echo $error['insurance_first_name'];?>
           </label>
         <?php endif;?>
       </div>
       <div class="last-name-container input-container full-width">
-        <label for="last_name">
+        <label for="insurance_last_name">
           <!-- <span class="asterisk">*</span> -->
           <?php _e('Apellido','nco'); ?>
         </label>
         <input type="text" name="insurance_last_name" value="" id="last_name" tabindex="20" />
         <?php if ( isset($error['insurance_last_name'] ) ) : ?>
-          <label id="insurance-last-name-error-server" class="error" for="insurance_email">
+          <label id="insurance-last-name-error-server" class="error" for="insurance_last_name">
             <?php echo $error['insurance_last_name'];?>
           </label>
         <?php endif;?>
       </div>
       <div class="email-container input-container full-width">
-        <label for="email">
+        <label for="insurance_email">
           <!-- <span class="asterisk">*</span> -->
           <?php _e('Email', 'nco'); ?>
         </label>
@@ -55,11 +55,10 @@
           <option value="iShop Colombia">iShop Colombia</option>
           <option value="iShop Panamá">iShop Panamá</option>
           <option value="iShop Perú">iShop Perú</option>
-          <option value="Mac Store Panama">Mac Store Panama</option>
-          <option value="Panafoto">Panafoto</option>
-          <option value="Multimax">Multimax</option>
-          <option value="Attenza Duty Free">Attenza Duty Free</option>
-          <option value="Website">Website</option>
+          <option value="iShop El Salvador">iShop El Salvador</option>
+          <option value="iShop Costa Rica">iShop Costa Rica</option>
+          <option value="iShop Nicaragua">iShop Nicaragua</option>
+          <option value="iShop Honduras">iShop Honduras</option>
         </select>
         <?php if ( isset($error['insurance_shop'] ) ) : ?>
           <label id="insurance-shop-error-server" class="error" for="insurance_shop">
@@ -114,7 +113,7 @@
           <!-- <span class="asterisk">*</span> -->
           <?php _e('Código de Activación', 'nco'); ?>
         </label>
-        <input type="number" name="insurance_activation_code" value="" id="insurance_activation_code" tabindex="80" />
+        <input type="text" name="insurance_activation_code" value="" id="insurance_activation_code" tabindex="80" />
         <?php if ( isset($error['insurance_activation_code'] ) ) : ?>
           <label id="insurance_activation_code-error-server" class="error" for="insurance_activation_code">
             <?php echo $error['insurance_activation_code'];?>

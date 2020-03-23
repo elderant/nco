@@ -476,6 +476,7 @@ function nco_validate_claim_password() {
 	$found = false;
 	foreach($claim_passwords as $index => $password ) {
 		if(false !== password_verify($claim_password, $password['password'] )) {
+			$password_name = $password['name'];
 			$found = true;
 			break;
 		}
@@ -485,6 +486,7 @@ function nco_validate_claim_password() {
 	if($found) {
 		$claim_count = get_post_meta( $post_id, 'claim count', true ) + 1;
 		update_post_meta( $post_id, 'claim count', $claim_count );
+		update_post_meta( $post_id, 'last claim password', $password_name );
 
 		$return_array['result'] = -1;
 		$return_array['html'] = "<br/><span>El número de usos del seguro a incrementado en 1</span>";
